@@ -1,0 +1,3 @@
+{
+  "extends": "@querykeep/config/tsconfig.base.json"
+}
