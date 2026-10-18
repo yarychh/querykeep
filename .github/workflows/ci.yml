@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Build library
+        run: bun run --filter querykeep build
+
       - name: Check formatting
         run: bun run fmt:check
 
@@ -45,8 +48,8 @@ jobs:
         run: bun test ./test
         working-directory: packages/querykeep
 
-      - name: Build workspace
-        run: bun run build
+      - name: Build docs
+        run: bun run --filter docs build
 
       - name: Smoke-test with Node.js
         run: node verification/runtime-smoke.mjs
