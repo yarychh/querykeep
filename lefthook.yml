@@ -2,9 +2,14 @@
 # https://github.com/evilmartians/lefthook
 
 pre-commit:
-  parallel: true
+  parallel: false
   jobs:
-    # Add your pre-commit commands here
-    # Example:
-    # - name: lint
-    #   run:  lint
+    - name: prettier
+      run: bun prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    - name: eslint
+      glob:
+        - "*.{js,mjs,cjs,ts,tsx}"
+        - "**/*.{js,mjs,cjs,ts,tsx}"
+      run: bun run lint:fix {staged_files}
+      stage_fixed: true

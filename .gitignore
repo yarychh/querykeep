@@ -9,9 +9,6 @@ build
 *.tsbuildinfo
 
 # Generated files
-apps/web/src/routeTree.gen.ts
-local.db
-local.db-*
 
 # Environment variables
 .env
@@ -43,13 +40,13 @@ lerna-debug.log*
 .turbo
 .nx
 
-# Better-T-Stack
-.alchemy
-.vercel
-
 # Testing
 coverage
 .nyc_output
+
+# Local notes that stay off the public remote
+packages/querykeep/VERIFICATION.txt
+packages/querykeep/querier-prd.md
 
 # Misc
 *.tgz

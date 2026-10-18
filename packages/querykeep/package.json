@@ -1,0 +1,44 @@
+{
+  "name": "querykeep",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared in-memory snapshots of async sources, with admission and retries",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "query",
+    "polling",
+    "rxjs",
+    "snapshot",
+    "concurrency"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "bun run build",
+    "test": "bun test ./test",
+    "demo": "bun examples/transport-board.ts",
+    "typecheck": "tsc -p tsconfig.check.json --noEmit",
+    "check-types": "tsc -p tsconfig.check.json --noEmit"
+  },
+  "peerDependencies": {
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "rxjs": "7.8.2",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

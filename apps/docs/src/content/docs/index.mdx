@@ -1,39 +1,68 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
-hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
-  actions:
-    - text: Example Guide
-      link: /guides/example/
-      icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
+title: Querykeep
+description: A single-process store for shared, observable snapshots of asynchronous sources.
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+Querykeep keeps one in-memory snapshot per query and shares admission across the queries on a client. You pass plain options and subscribe to the streams the query already owns. Creating a query starts it. Unsubscribing does not stop it. [Why Querykeep](/why/) compares this with a timer and with TanStack Query.
 
-## Next steps
+RxJS stays inside the library for scheduling, retries, and state. The quickstart does not use operators, subjects, or schedulers. The package is `querykeep`. It targets Node.js 22+, Bun, and modern browsers.
 
-<CardGrid stagger>
-  <Card title="Update content" icon="pencil">
-    Edit `src/content/docs/index.mdx` to see this page change.
-  </Card>
-  <Card title="Change page layout" icon="document">
-    Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
-  </Card>
-  <Card title="Add new content" icon="add-document">
-    Add Markdown or MDX files to `src/content/docs` to create new pages.
-  </Card>
-  <Card title="Configure your site" icon="setting">
-    Edit your `sidebar` and other config in `astro.config.mjs`.
-  </Card>
-  <Card title="Read the docs" icon="open-book">
-    Learn more in [the Starlight Docs](https://starlight.astro.build/).
-  </Card>
-</CardGrid>
+```ts
+import { createQueryClient } from 'querykeep';
+
+type Departure = { line: string; when: string };
+
+const client = createQueryClient({
+  defaults: {
+    intervalMs: 30_000,
+    timeoutMs: 10_000,
+    admissionTimeoutMs: 30_000,
+    retry: { maxAttempts: 3, delayMs: 1_000 },
+  },
+  concurrency: 4,
+  maxQueued: 256,
+  providers: {
+    transport: { concurrency: 2, minIntervalMs: 1_000 },
+  },
+});
+
+async function fetchDepartures(stopId: string, signal: AbortSignal): Promise<Departure[]> {
+  const response = await fetch(`https://example.test/stops/${stopId}/departures`, { signal });
+
+  if (response.status === 429) {
+    client.cooldown('transport', 5_000); // replace with the delay you parsed from Retry-After
+    throw new Error('rate limited');
+  }
+
+  if (!response.ok) throw new Error(`departures ${response.status}`);
+
+  return (await response.json()) as Departure[];
+}
+
+const departures = client.query({
+  key: ['departures', 'stop-A'],
+  provider: 'transport',
+  queryFn: ({ signal }) => fetchDepartures('stop-A', signal),
+});
+
+departures.state$.subscribe(renderState);
+departures.snapshots$.subscribe(saveSnapshot);
+departures.select((state) => state.snapshot?.data).subscribe(renderData);
+departures.state(); // current state, no fetch
+departures.refresh(); // true when this call delivered a trigger
+departures.pause();
+departures.resume();
+client.get<Departure[]>(['departures', 'stop-A']); // same query; the type argument is unchecked
+departures.dispose();
+client.dispose();
+```
+
+`queryFn` receives `{ signal }` and returns a promise. Close over inputs. Put every value that changes the result, or who may see it, into the key.
+
+`state()` returns a shallow copy of the state and, when a snapshot is present, a shallow copy of `{ data, receivedAt }`. Payload references are shared. There is no deep clone. `Query.key` is the canonical id. `client.get(key)` returns the live query, or `undefined` when the key is not registered.
+
+Pass `initialSnapshot: { data, receivedAt }` when you already have a stored snapshot. `createQuery` is the same pipeline with a private single-key admission object, no registry, and `key` equal to the string `query`. Its options are `queryFn`, `intervalMs`, `timeoutMs`, `admissionTimeoutMs`, `retry`, `initialSnapshot`, `enabled`, `refreshOn$`, and `enabled$`.
+
+Library defaults are an interval of 30 seconds, an attempt timeout of 10 seconds, an admission timeout of 30 seconds, and 3 attempts with a fixed 1 second delay. A client allows 4 concurrent attempts and 256 queued waiters.
+
+A positive `intervalMs` is a safe integer. `intervalMs: false` runs once immediately, then only when you call `refresh()` or, if you opted in, when `refreshOn$` emits.

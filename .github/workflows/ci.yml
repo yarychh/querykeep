@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  querykeep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+      - run: bun install
+      - run: bun test ./test
+        working-directory: packages/querykeep
+      - run: bun run typecheck
+        working-directory: packages/querykeep
+      - run: bun run build
+        working-directory: packages/querykeep
+      - run: node verification/runtime-smoke.mjs
+        working-directory: packages/querykeep
+      - run: bun verification/runtime-smoke.mjs
+        working-directory: packages/querykeep
+      - run: bunx tsc -p tsconfig.dom.json --pretty false --noEmit
+        working-directory: packages/querykeep
