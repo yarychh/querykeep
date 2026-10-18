@@ -1,8 +1,13 @@
 # Querykeep
 
-Querykeep keeps a shared, in-memory snapshot of an asynchronous source and polls it on a schedule you set. One client shares concurrency, start spacing, and cooldown across queries, so several readers can observe the same key without each running its own timer.
+Querykeep keeps a shared, in-memory snapshot of an asynchronous source and polls it on a schedule you set. One client shares concurrency, start spacing, and cooldown across queries, so several readers can observe the same key without each running its own timer. A `setInterval` plus a variable does not share a provider budget, keep a single in-flight call per key, or retain the last success across retries.
 
-Use it from a service, worker, dashboard, or SDK that polls a rate-limited source and wants the last success, the error, and the phase in one place. A `setInterval` plus a variable does not share a provider budget, keep a single in-flight call per key, or retain the last success across retries. TanStack Query is the better fit when you want a component cache, stale time, focus revalidation, or framework bindings. Querykeep does not do those. A query starts when you create it, keeps running with zero subscribers, and stops when you `pause` or `dispose` it.
+- One canonical key has one in-flight call. Readers share the snapshot.
+- The client caps concurrency, spaces starts, and records the provider cooldown you parse from `Retry-After`.
+- The last accepted success stays through retries and admission failures. The state holds the snapshot, the error, and the phase in one place.
+- A query starts when you create it, keeps running with zero subscribers, and stops when you `pause` or `dispose` it.
+
+Use it from a service, worker, dashboard, or SDK that polls a rate-limited source. TanStack Query is the better fit when you want a component cache, stale time, focus revalidation, or framework bindings. Querykeep does not do those.
 
 RxJS is a peer dependency. It stays inside the library for scheduling, retries, and state. The quickstart does not use operators, subjects, or schedulers.
 

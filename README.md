@@ -1,6 +1,10 @@
-# querykeep
+# Querykeep
 
-Workspace for the Querykeep library and its documentation site.
+Shared, in-memory snapshots of asynchronous sources, with admission and retries.
+
+Querykeep polls an asynchronous source on a schedule you set and keeps the last accepted result, the error, and the phase in one place. One client shares concurrency, start spacing, and provider cooldown across queries, so several readers in one process can observe one rate-limited source without each running its own timer.
+
+The library lives in [`packages/querykeep`](packages/querykeep/README.md). That README is the behavioral contract consumers read, and the docs app follows it.
 
 ```
 querykeep/
@@ -24,4 +28,4 @@ bun run --filter querykeep demo
 
 From `packages/querykeep`, the same checks are `bun run typecheck`, `bun run build`, `bun test ./test`, and `bun run demo`. `tsc` compiles `src/` to `dist/`. Node 22+ is the declared consumer runtime. The public build uses DOM and ES2023 types only, so a browser project does not need `@types/node`.
 
-The package README is the behavioral contract consumers will read. The docs app should follow that README. No license is chosen yet, and `querykeep` stays `private` until publication is authorized.
+No license is chosen yet, and `querykeep` stays `private` until publication is authorized.
