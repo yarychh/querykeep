@@ -8,8 +8,8 @@ The library lives in [`packages/querykeep`](packages/querykeep/README.md). That 
 
 ```
 querykeep/
-├── apps/docs/          # Starlight site. Unpublished.
-├── packages/querykeep/ # The library. Private until a license is chosen and a release is authorized.
+├── apps/docs/          # Starlight documentation site.
+├── packages/querykeep/ # The publishable library package.
 ```
 
 ## Scripts
@@ -28,4 +28,4 @@ bun run --filter querykeep demo
 
 From `packages/querykeep`, the same checks are `bun run typecheck`, `bun run build`, `bun test ./test`, and `bun run demo`. `tsc` compiles `src/` to `dist/`. Node 22+ is the declared consumer runtime. The public build uses DOM and ES2023 types only, so a browser project does not need `@types/node`.
 
-No license is chosen yet, and `querykeep` stays `private` until publication is authorized.
+Querykeep is available under the [MIT License](LICENSE).

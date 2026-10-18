@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yarychh.github.io/querykeep/sitemap-index.xml

@@ -4,10 +4,19 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://yarychh.github.io',
+  base: '/querykeep',
   integrations: [
     starlight({
       title: 'Querykeep',
-      description: 'Single-process managed query store',
+      description: 'Shared in-memory snapshots of asynchronous sources, with admission and retries',
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/yarychh/querykeep',
+        },
+      ],
       sidebar: [
         { label: 'Quickstart', slug: 'index' },
         { label: 'Why Querykeep', slug: 'why' },

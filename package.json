@@ -16,7 +16,6 @@
     "fmt:check": "prettier --check ."
   },
   "devDependencies": {
-    "@querykeep/config": "workspace:*",
     "@types/node": "^26.4.1",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",

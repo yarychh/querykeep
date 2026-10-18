@@ -2,7 +2,7 @@
 
 Normative behavior for the public alpha. The package README is the user-facing wording of the same rules. Research notes and the pre-replacement comparison stay off this repository.
 
-The package name is `querykeep`. It is private. No license is chosen here. Publication is a separate decision.
+The package name is `querykeep`. It is published under the MIT License.
 
 ## In scope
 

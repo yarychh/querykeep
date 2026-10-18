@@ -9,7 +9,7 @@ pre-commit:
       stage_fixed: true
     - name: eslint
       glob:
-        - "*.{js,mjs,cjs,ts,tsx}"
-        - "**/*.{js,mjs,cjs,ts,tsx}"
+        - '*.{js,mjs,cjs,ts,tsx}'
+        - '**/*.{js,mjs,cjs,ts,tsx}'
       run: bun run lint:fix {staged_files}
       stage_fixed: true

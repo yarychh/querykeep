@@ -208,3 +208,7 @@ This is one process, in memory. It is not a distributed cache.
 - A non-cooperative `queryFn` can occupy a slot until its promise settles. Dispose does not cancel that promise.
 - Payload bytes, write durability, and schema migration belong to the caller.
 - No metrics server, HTTP server, framework bindings, or second execution engine is included.
+
+## License
+
+MIT
